@@ -11,7 +11,34 @@ function Book(title, author, pages, read){
     this.read = read;
     this.displayed = false;
 
+
 }
+
+function books(){}
+
+books.prototype.toggleRead = function(){
+    if(this.read === "Read"){
+        this.read = "Not Read";
+        return;
+    }
+    else if(this.read === "Not Read"){
+        this.read = "Read";
+        return;
+    }
+}
+
+Book.prototype = Object.create(books.prototype);
+
+
+function changeRead(bookIndex){
+    let updatedBook = myLibrary[bookIndex]
+    updatedBook.toggleRead();
+    updatedBook.displayed = false;
+    myLibrary.splice(bookIndex, 0, updatedBook);
+    deleteBook(bookIndex);
+    render(myLibrary);
+}
+
 
 function addBookToLibrary(book){
     myLibrary.push(book);
@@ -39,7 +66,7 @@ function render(library){
             let statusButton = document.createElement("button");
             statusButton.classList.add("changeStat");
             statusButton.innerText = "Change Status";
-            statusButton.setAttribute("onclick", "changeRead()");
+            statusButton.setAttribute("onclick", `changeRead(${library.indexOf(book)})`);
             bookCard.append(title);
             bookCard.append(author);
             bookCard.append(pages);
@@ -75,11 +102,6 @@ function addBook(){
     }
 }
 
-function changeRead(){
-    alert("hi");
-
-
-}
 
 function deleteBook(deleteIndex){
     debugger;
@@ -114,4 +136,5 @@ function validation(){
 
 const book1 = new Book("The Alchemist", "Paulo Coelho", "163", "Read")
 addBookToLibrary(book1);
+book1.toggleRead();
 render(myLibrary)
