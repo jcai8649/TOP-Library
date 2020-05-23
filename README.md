@@ -1,0 +1,1 @@
+A simple library app that allows you add, delete and keep track of your favorite books.
