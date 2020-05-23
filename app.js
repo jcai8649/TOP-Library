@@ -3,19 +3,19 @@ let main = document.querySelector("main")
 
 let myLibrary = [];
 
-
+//constructor
 function Book(title, author, pages, read){
     this.title = title;
     this.author = author;
     this.pages = pages;
     this.read = read;
-    this.displayed = false;
 
 
 }
 
 function books(){}
 
+//toggle function for read status
 books.prototype.toggleRead = function(){
     if(this.read === "Read"){
         this.read = "Not Read";
@@ -33,9 +33,7 @@ Book.prototype = Object.create(books.prototype);
 function changeRead(bookIndex){
     let updatedBook = myLibrary[bookIndex]
     updatedBook.toggleRead();
-    updatedBook.displayed = false;
-    myLibrary.splice(bookIndex, 0, updatedBook);
-    deleteBook(bookIndex);
+    myLibrary.splice(bookIndex, 1, updatedBook);
     render(myLibrary);
 }
 
@@ -44,9 +42,10 @@ function addBookToLibrary(book){
     myLibrary.push(book);
 }
 
+//create and append book info into main after clearing the main elements
 function render(library){
+    mainClear();
     for(let book of library){
-        if (book.displayed === false){
             let bookCard = document.createElement("section");
             bookCard.classList.add("contain")
             bookCard.classList.add("text-center");
@@ -61,10 +60,14 @@ function render(library){
             read.innerText = "Status: " + book.read;
             let deleteButton = document.createElement("button");
             deleteButton.classList.add("delete");
+            deleteButton.classList.add("btn");
+            deleteButton.classList.add("btn-danger");
             deleteButton.innerText = "Delete";
             deleteButton.setAttribute("onclick", `deleteBook(${library.indexOf(book)})`);
             let statusButton = document.createElement("button");
             statusButton.classList.add("changeStat");
+            statusButton.classList.add("btn");
+            statusButton.classList.add("btn-info");
             statusButton.innerText = "Change Status";
             statusButton.setAttribute("onclick", `changeRead(${library.indexOf(book)})`);
             bookCard.append(title);
@@ -73,12 +76,11 @@ function render(library){
             bookCard.append(read);
             bookCard.append(deleteButton);
             bookCard.append(statusButton);
-            book.displayed = true;
             book.id = library.indexOf(book);
             main.append(bookCard);
         }
     }
-}
+
 
 function addBook(){
     let title = document.getElementById("title").value;
@@ -104,7 +106,6 @@ function addBook(){
 
 
 function deleteBook(deleteIndex){
-    debugger;
     let deleteChild = document.getElementById(deleteIndex);
     myLibrary.splice(deleteIndex,1);
     main.removeChild(deleteChild);
@@ -113,6 +114,7 @@ function deleteBook(deleteIndex){
 function formReset(){
     document.querySelector("form").reset();
 }
+
 
 function validation(){
     let title = document.getElementById("title").value;
@@ -133,8 +135,18 @@ function validation(){
     return true;
 }
 
+//removes all the child from main to reset the DOM
+function mainClear(){
+    let first = main.firstElementChild;
+    while (first){
+        first.remove();
+        first = main.firstElementChild;
+    }
+}
+
 
 const book1 = new Book("The Alchemist", "Paulo Coelho", "163", "Read")
+const book2 = new Book("The Last Dance", "Michael Jordan", "10", "Not Read")
 addBookToLibrary(book1);
-book1.toggleRead();
+addBookToLibrary(book2);
 render(myLibrary)
