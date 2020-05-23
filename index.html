@@ -5,20 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>TOP Library</title>
+
+ 
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
 </head>
 <body>
     <h1 class="header text-center">Library</h1>
-
     <div class="text-center">
-        <button class="btn btn-primary add">NEW BOOK</button>
+        <button type="button" class="btn btn-primary add" data-toggle="modal" data-target="#myModal">NEW BOOK</button>
     </div>
-    <main class="main">
-        
-    </main>
-    
 
-<script src="app.js"> </script>
+    <!-- The Modal -->
+    <div class="modal" id="myModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+      
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Add Book</h4>
+              <button type="button" class="close" data-dismiss="modal" onclick="formReset()">&times;</button>
+            </div>
+      
+            <!-- Modal body -->
+            <div class="modal-body">
+              <form method="post" nane="form_name" id="form_id">
+                <label for="title">Title: </label><br>
+                <input type="text" id="title" name="title" required><br>
+                <label for="author">Author: </label><br>
+                <input type="text" id="author" name="author" required><br>
+                <label for="pages">Pages: </label><br>
+                <input type="number" id="pages" name="pages" required><br><br>
+                <label for="status">Status: </label><br>
+                <input type="radio"  name="status" value="Read">
+                <label for="read">Read</label><br>
+                <input type="radio"  name="status" value="Not Read">
+                <label for="Not Read">Not Read</label>
+              </form>
+            </div>
+      
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary submit" onclick="addBook()">Add Book</button>
+            </div>
+      
+          </div>
+        </div>
+      </div>
+    <main class="main"></main>
+    
+    <script src="app.js"> </script>   
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 </body>
 </html>
