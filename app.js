@@ -3,33 +3,29 @@ let main = document.querySelector("main")
 
 let myLibrary = [];
 
-//constructor
-function Book(title, author, pages, read){
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.read = read;
 
-
-}
-
-function books(){}
-
-//toggle function for read status
-books.prototype.toggleRead = function(){
-    if(this.read === "Read"){
-        this.read = "Not Read";
-        return;
+class Book{
+    constructor(title, author, pages, read){
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+        this.read = read;
     }
-    else if(this.read === "Not Read"){
-        this.read = "Read";
-        return;
+    //toggle function for read status
+    toggleRead() {
+        if(this.read === "Read"){
+            this.read = "Not Read";
+            return;
+        }
+        else if(this.read === "Not Read"){
+            this.read = "Read";
+            return;
+        }
     }
 }
 
-Book.prototype = Object.create(books.prototype);
 
-
+//gets the index of the current book and toggle it's read status then render the library
 function changeRead(bookIndex){
     let updatedBook = myLibrary[bookIndex]
     updatedBook.toggleRead();
