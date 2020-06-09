@@ -1,6 +1,5 @@
 
 let main = document.querySelector("main")
-
 let myLibrary = [];
 
 
@@ -11,71 +10,38 @@ class Book{
         this.pages = pages;
         this.read = read;
     }
-    //toggle function for read status
-    toggleRead() {
-        if(this.read === "Read"){
-            this.read = "Not Read";
-            return;
-        }
-        else if(this.read === "Not Read"){
-            this.read = "Read";
-            return;
-        }
-    }
 }
 
-
-//gets the index of the current book and toggle it's read status then render the library
-function changeRead(bookIndex){
-    let updatedBook = myLibrary[bookIndex]
-    updatedBook.toggleRead();
-    myLibrary.splice(bookIndex, 1, updatedBook);
-    render(myLibrary);
+//reset the localStorage library. Used whenever the libray needs to be updated
+function updateLocal(){
+    localStorage.setItem("lib", JSON.stringify(myLibrary));
 }
 
+//retrieve the localStorage library data
+function getLocalStorage(){
+    return JSON.parse(localStorage.getItem("lib"))
+}
 
 function addBookToLibrary(book){
     myLibrary.push(book);
+    updateLocal();
 }
 
-//create and append book info into main after clearing the main elements
-function render(library){
-    mainClear();
-    for(let book of library){
-            let bookCard = document.createElement("section");
-            bookCard.classList.add("contain")
-            bookCard.classList.add("text-center");
-            bookCard.setAttribute("id", library.indexOf(book));
-            let title = document.createElement("h6")
-            title.innerText = "Title: " + book.title;
-            let author = document.createElement("h6")
-            author.innerText = "By: " + book.author;
-            let pages = document.createElement("h6")
-            pages.innerText = "Pages: " + book.pages;
-            let read = document.createElement("h6")
-            read.innerText = "Status: " + book.read;
-            let deleteButton = document.createElement("button");
-            deleteButton.classList.add("delete");
-            deleteButton.classList.add("btn");
-            deleteButton.classList.add("btn-danger");
-            deleteButton.innerText = "Delete";
-            deleteButton.setAttribute("onclick", `deleteBook(${library.indexOf(book)})`);
-            let statusButton = document.createElement("button");
-            statusButton.classList.add("changeStat");
-            statusButton.classList.add("btn");
-            statusButton.classList.add("btn-info");
-            statusButton.innerText = "Change Status";
-            statusButton.setAttribute("onclick", `changeRead(${library.indexOf(book)})`);
-            bookCard.append(title);
-            bookCard.append(author);
-            bookCard.append(pages);
-            bookCard.append(read);
-            bookCard.append(deleteButton);
-            bookCard.append(statusButton);
-            book.id = library.indexOf(book);
-            main.append(bookCard);
-        }
+//gets the index of the current book and toggle it's read status then render the library
+function changeRead(bookIndex){
+
+    let updatedBook = myLibrary[bookIndex]
+    
+    if (updatedBook['read'] == "Read"){
+        updatedBook['read'] = "Not Read"
+    } else {
+        updatedBook['read'] = "Read"
     }
+
+    myLibrary.splice(bookIndex, 1, updatedBook);
+    updateLocal();
+    render();
+}
 
 
 function addBook(){
@@ -93,8 +59,9 @@ function addBook(){
     if (validation()){
         let newTitle = new Book(title, author, pages, selectedValue);
         addBookToLibrary(newTitle);
-        render(myLibrary);
+        render();
         formReset();
+        $('#myModal').modal("toggle");
     } else {
         alert("Please fill in all required information")
     }
@@ -104,7 +71,9 @@ function addBook(){
 function deleteBook(deleteIndex){
     let deleteChild = document.getElementById(deleteIndex);
     myLibrary.splice(deleteIndex,1);
+    updateLocal();
     main.removeChild(deleteChild);
+    render();
 }
 
 function formReset(){
@@ -131,6 +100,50 @@ function validation(){
     return true;
 }
 
+
+//create and append book info into main after clearing the main elements
+function render(){
+    mainClear();
+    let localLibrary = getLocalStorage();
+    if (localLibrary.length !== 0){
+        for(let book of localLibrary){
+            let bookCard = document.createElement("section");
+            bookCard.classList.add("contain")
+            bookCard.classList.add("text-center");
+            bookCard.setAttribute("id", localLibrary.indexOf(book));
+            let title = document.createElement("h6")
+            title.innerText = "Title: " + book.title;
+            let author = document.createElement("h6")
+            author.innerText = "By: " + book.author;
+            let pages = document.createElement("h6")
+            pages.innerText = "Pages: " + book.pages;
+            let read = document.createElement("h6")
+            read.innerText = "Status: " + book.read;
+            let deleteButton = document.createElement("button");
+            deleteButton.classList.add("delete");
+            deleteButton.classList.add("btn");
+            deleteButton.classList.add("btn-danger");
+            deleteButton.innerText = "Delete";
+            deleteButton.setAttribute("onclick", `deleteBook(${localLibrary.indexOf(book)})`);
+            let statusButton = document.createElement("button");
+            statusButton.classList.add("changeStat");
+            statusButton.classList.add("btn");
+            statusButton.classList.add("btn-info");
+            statusButton.innerText = "Change Status";
+            statusButton.setAttribute("onclick", `changeRead(${localLibrary.indexOf(book)})`);
+            bookCard.append(title);
+            bookCard.append(author);
+            bookCard.append(pages);
+            bookCard.append(read);
+            bookCard.append(deleteButton);
+            bookCard.append(statusButton);
+            book.id = localLibrary.indexOf(book);
+            main.append(bookCard);
+        }
+    }
+}
+
+
 //removes all the child from main to reset the DOM
 function mainClear(){
     let first = main.firstElementChild;
@@ -140,9 +153,23 @@ function mainClear(){
     }
 }
 
+function updateMyLibrary(){
+    myLibrary = getLocalStorage();
+}
 
-const book1 = new Book("The Alchemist", "Paulo Coelho", "163", "Read")
-const book2 = new Book("The Last Dance", "Michael Jordan", "10", "Not Read")
-addBookToLibrary(book1);
-addBookToLibrary(book2);
-render(myLibrary)
+
+//if localStorage is cleared, reset to default;
+if(getLocalStorage() === null){
+    let book = new Book("The Last Dance", "Michael Jordan", 10, "Read")
+    let book2 = new Book("The Alchemist", "Paulo Coelho", 120, "Read")
+    addBookToLibrary(book);
+    addBookToLibrary(book2);
+}
+
+//update local storage after each refresh
+if (getLocalStorage() !== myLibrary){
+    updateMyLibrary();
+}
+
+render();
+
